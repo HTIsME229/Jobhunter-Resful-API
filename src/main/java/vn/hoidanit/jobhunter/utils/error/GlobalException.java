@@ -16,13 +16,14 @@ import java.util.List;
 
 @RestControllerAdvice
 public class GlobalException {
-    @ExceptionHandler(value = IdInvalidExeption.class)
-    public ResponseEntity<RestResponse<Object>> handleIdInvalidExeption(IdInvalidExeption idInvalidExeption) {
+    @ExceptionHandler(value = {IdInvalidExeption.class,
+            IllegalArgumentException.class})
+    public ResponseEntity<RestResponse<Object>> handleIdInvalidExeption(Exception ex) {
 
         RestResponse<Object> res = new RestResponse<Object>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         res.setError("call API fails");
-        res.setMessage(idInvalidExeption.getMessage());
+        res.setMessage(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 
@@ -35,7 +36,7 @@ public class GlobalException {
         }
         RestResponse<Object> res = new RestResponse<Object>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
-        res.setError("call API fails");
+        res.setError("Invalid Request Content");
         res.setMessage(messages.size() > 1 ? messages : fieldErrors.get(0).getDefaultMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }

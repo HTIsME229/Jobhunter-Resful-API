@@ -8,6 +8,7 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
 import vn.hoidanit.jobhunter.domain.RestResponse;
 
 import java.util.ArrayList;
@@ -30,15 +31,20 @@ public class FormatResResponse implements ResponseBodyAdvice<Object> {
         RestResponse res = new RestResponse();
 
 
+        if (body instanceof String) {
+            return body;
+        }
+
         if (statusCode >= 400) {
 
             return body;
         } else {
-        
+
             res.setStatusCode(statusCode);
             res.setData(body);
             res.setMessage("call Api Success");
         }
+
         return res;
     }
 }

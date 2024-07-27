@@ -1,5 +1,7 @@
 package vn.hoidanit.jobhunter.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.hoidanit.jobhunter.domain.User;
@@ -24,6 +26,11 @@ public class UserService {
         user.setName(datauser.getName());
         user.setPassword(this.passwordEncoder.encode(datauser.getPassword()));
         return this.userRepository.save(user);
+    }
+
+    public Page<User> handleGetUserWithPaginate(Pageable pageable) {
+        return this.userRepository.findAll(pageable);
+
     }
 
     public User handleGetUserById(long id) {
