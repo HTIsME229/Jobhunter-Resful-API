@@ -2,6 +2,8 @@ plugins {
     java
     id("org.springframework.boot") version "3.2.4"
     id("io.spring.dependency-management") version "1.1.4"
+
+
 }
 
 group = "vn.hoidanit"
@@ -24,7 +26,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-
+    implementation("org.hibernate:hibernate-jpamodelgen:5.6.14.Final")
+    annotationProcessor("org.hibernate:hibernate-jpamodelgen:5.6.14.Final")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     runtimeOnly("com.mysql:mysql-connector-j")
     implementation("jakarta.persistence:jakarta.persistence-api:3.0.0")

@@ -12,9 +12,12 @@ import vn.hoidanit.jobhunter.domain.DTO.RestPaginateDTO;
 import vn.hoidanit.jobhunter.domain.DTO.RestPaginateDTO;
 import vn.hoidanit.jobhunter.domain.RestResponse;
 import vn.hoidanit.jobhunter.service.CompanyService;
+import vn.hoidanit.jobhunter.utils.annotation.ApiMessage;
 
 import java.util.List;
 import java.util.Optional;
+
+@RequestMapping("/api/v1")
 
 @RestController
 public class CompanyController {
@@ -30,23 +33,10 @@ public class CompanyController {
         return ResponseEntity.status(201).body(newCompany);
     }
 
-    @GetMapping("/companies/all")
-    public ResponseEntity<List<Company>> GetAllCompanies() {
-        List<Company> listCompany = this.companyService.handleGetAllCompany();
-        return ResponseEntity.status(200).body(listCompany);
-    }
-
+    @ApiMessage("Fetch companies Success")
     @GetMapping("/companies")
-    public ResponseEntity<RestPaginateDTO> GetAllCompaniesWithPaginate(@RequestParam("current") Optional<String> optionalCurrent, @RequestParam("pageSize") Optional<String> optionalPageSize) {
-        int page = 0;
-        int pageSize = 10;
-        if (optionalCurrent.isPresent()) {
-            page = Integer.parseInt(optionalCurrent.get());
-        }
-        if (optionalPageSize.isPresent()) {
-            pageSize = Integer.parseInt(optionalPageSize.get());
-        }
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public ResponseEntity<RestPaginateDTO> GetAllCompaniesWithPaginate(Pageable pageable) {
+
         Page<Company> Company = this.companyService.handleGetCompanyWithPaginate(pageable);
         List<Company> listCompany = Company.getContent();
         Meta meta = new Meta();
