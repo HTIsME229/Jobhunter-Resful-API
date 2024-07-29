@@ -11,6 +11,7 @@ import vn.hoidanit.jobhunter.domain.DTO.Meta;
 import vn.hoidanit.jobhunter.domain.DTO.RestPaginateDTO;
 import vn.hoidanit.jobhunter.domain.DTO.RestPaginateDTO;
 import vn.hoidanit.jobhunter.domain.RestResponse;
+import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.service.CompanyService;
 import vn.hoidanit.jobhunter.utils.annotation.ApiMessage;
 
@@ -59,6 +60,7 @@ public class CompanyController {
     @DeleteMapping("companies/{id}")
     public ResponseEntity<RestResponse> DeleteCompany(@PathVariable long id) {
         this.companyService.handleDeleteCompany(id);
+        
         return ResponseEntity.status(200).build();
     }
 }

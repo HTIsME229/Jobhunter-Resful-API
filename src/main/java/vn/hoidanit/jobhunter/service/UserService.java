@@ -104,4 +104,16 @@ public class UserService {
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+    public void UpdateUserToken(String Token, String email) {
+        User user = getUserByEmail(email);
+        if (user != null) {
+            user.setRefreshToken(Token);
+            this.userRepository.save(user);
+        }
+    }
+
+    public User handleFindByEmailAndRefreshToken(String email, String refreshToken) {
+        return this.userRepository.findByEmailAndRefreshToken(email, refreshToken);
+    }
 }
