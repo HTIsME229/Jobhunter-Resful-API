@@ -113,6 +113,11 @@ public class UserService {
         }
     }
 
+    public void handleRemoveRefreshToken(User user) {
+        user.setRefreshToken(null);
+        this.userRepository.save(user);
+    }
+
     public User handleFindByEmailAndRefreshToken(String email, String refreshToken) {
         return this.userRepository.findByEmailAndRefreshToken(email, refreshToken);
     }

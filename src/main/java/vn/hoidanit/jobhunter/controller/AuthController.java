@@ -11,7 +11,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import vn.hoidanit.jobhunter.domain.DTO.GetAccoutDTO;
 import vn.hoidanit.jobhunter.domain.DTO.RestLoginDto;
 import vn.hoidanit.jobhunter.domain.DTO.UserLoginDTO;
 import vn.hoidanit.jobhunter.domain.DTO.loginDTO;
@@ -53,7 +55,7 @@ public class AuthController {
         User userLogin = this.userService.getUserByEmail(Email);
         UserLoginDTO userLoginDTO = new UserLoginDTO(userLogin.getEmail(), userLogin.getName(), userLogin.getId());
         restLoginDto.setUser(userLoginDTO);
-        String AccessToken = this.securityUtil.CreateAccessToken(authentication, userLoginDTO);
+        String AccessToken = this.securityUtil.CreateAccessToken(userLogin.getEmail(), userLoginDTO);
         restLoginDto.setAccess_token(AccessToken);
         String refreshToken = this.securityUtil.CreateRefreshToken(Email, restLoginDto);
         this.userService.UpdateUserToken(refreshToken, Email);
@@ -65,22 +67,48 @@ public class AuthController {
 
     @ApiMessage("Get Account Success")
     @GetMapping("/auth/account")
-    public ResponseEntity<UserLoginDTO> getAccount() {
+    public ResponseEntity<GetAccoutDTO> getAccount() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = this.userService.getUserByEmail(email);
         UserLoginDTO userLoginDTO = new UserLoginDTO(currentUser.getEmail(), currentUser.getName(), currentUser.getId());
-
-        return ResponseEntity.ok(userLoginDTO);
+        GetAccoutDTO res = new GetAccoutDTO();
+        res.setUser(userLoginDTO);
+        return ResponseEntity.ok(res);
     }
 
-//    @ApiMessage("Get Account Success")
-//    @GetMapping("/auth/refresh")
-//    public ResponseEntity<UserLoginDTO> getRefreshToken() {
-//        String email = SecurityContextHolder.getContext().getAuthentication().getName();
-//        User currentUser = this.userService.
-//        UserLoginDTO userLoginDTO = new UserLoginDTO(currentUser.getEmail(), currentUser.getName(), currentUser.getId());
-//
-//        return ResponseEntity.ok(userLoginDTO);
-//    }
+    @ApiMessage("Get new refresh token success")
+    @GetMapping("/auth/refresh")
+    public ResponseEntity<RestLoginDto> getRefreshToken(@CookieValue(name = "refresh_token") String refresh_token) {
+        //check valid token
+        Jwt tokenDecode = this.securityUtil.checkValidRefreshToken(refresh_token);
+        String email = tokenDecode.getSubject();
+        User currentUser = this.userService.handleFindByEmailAndRefreshToken(email, refresh_token);
+        if (currentUser != null) {
+            RestLoginDto restLoginDto = new RestLoginDto();
+            UserLoginDTO userLoginDTO = new UserLoginDTO(currentUser.getEmail(), currentUser.getName(), currentUser.getId());
+            String AccessToken = this.securityUtil.CreateAccessToken(currentUser.getEmail(), userLoginDTO);
+            restLoginDto.setAccess_token(AccessToken);
+            restLoginDto.setUser(userLoginDTO);
+            String newRefreshToken = this.securityUtil.CreateRefreshToken(currentUser.getEmail(), restLoginDto);
+            this.userService.UpdateUserToken(newRefreshToken, currentUser.getEmail());
+            ResponseCookie responseCookie = ResponseCookie.from("refresh_token", newRefreshToken).httpOnly(true).path("/").maxAge(refreshTokenExpiration).build();
+            return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, responseCookie.toString()).body(restLoginDto);
+        }
+        throw new RuntimeException("Token is not valid");
+
+
+    }
+
+    @ApiMessage("Logout  Success")
+    @GetMapping("/logout")
+    public ResponseEntity<Void> Logout() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User currentUser = this.userService.getUserByEmail(email);
+        if (currentUser != null) {
+            this.userService.handleRemoveRefreshToken(currentUser);
+        }
+
+        return ResponseEntity.ok().build();
+    }
 
 }

@@ -67,7 +67,7 @@ public class SecurityConfiguration {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new
                 JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("");
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("user");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("permission");
         JwtAuthenticationConverter jwtAuthenticationConverter = new
                 JwtAuthenticationConverter();
 
@@ -84,7 +84,7 @@ public class SecurityConfiguration {
 //                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()) //403
 //                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/login", "/").permitAll()
+                        .requestMatchers("/api/v1/login", "/", "/api/v1/auth/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(c -> c.disable())
@@ -92,6 +92,9 @@ public class SecurityConfiguration {
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint)
                 )
+                .logout(log -> log
+                        .logoutSuccessUrl("/api/v1/logout")
+                        .deleteCookies("refresh_token"))
 
 
                 .formLogin(f -> f.disable())

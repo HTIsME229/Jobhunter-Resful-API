@@ -5,6 +5,7 @@ public class UserLoginDTO {
     private String name;
     private long id;
 
+
     public UserLoginDTO(String email, String name, long id) {
         this.email = email;
         this.name = name;
