@@ -2,16 +2,13 @@ package vn.hoidanit.jobhunter.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.hoidanit.jobhunter.domain.Company;
-import vn.hoidanit.jobhunter.domain.DTO.Meta;
-import vn.hoidanit.jobhunter.domain.DTO.RestPaginateDTO;
-import vn.hoidanit.jobhunter.domain.DTO.RestPaginateDTO;
+import vn.hoidanit.jobhunter.domain.res.Meta;
+import vn.hoidanit.jobhunter.domain.res.RestPaginateDTO;
 import vn.hoidanit.jobhunter.domain.RestResponse;
-import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.service.CompanyService;
 import vn.hoidanit.jobhunter.utils.annotation.ApiMessage;
 

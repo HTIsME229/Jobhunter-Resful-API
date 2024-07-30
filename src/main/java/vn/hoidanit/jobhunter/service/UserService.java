@@ -5,15 +5,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import vn.hoidanit.jobhunter.domain.DTO.CreateUserDTO;
-import vn.hoidanit.jobhunter.domain.DTO.GetUserDTO;
-import vn.hoidanit.jobhunter.domain.DTO.UpdateUserDTO;
+import vn.hoidanit.jobhunter.domain.res.CreateUserDTO;
+import vn.hoidanit.jobhunter.domain.res.GetUserDTO;
+import vn.hoidanit.jobhunter.domain.res.UpdateUserDTO;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.repository.UserRepository;
 import vn.hoidanit.jobhunter.service.Specfication.SpecificationsBuilder;
-import vn.hoidanit.jobhunter.utils.Enum.GenderEnum;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 

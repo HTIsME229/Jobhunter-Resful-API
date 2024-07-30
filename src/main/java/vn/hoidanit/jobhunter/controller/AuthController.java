@@ -1,7 +1,6 @@
 package vn.hoidanit.jobhunter.controller;
 
 import jakarta.validation.Valid;
-import org.antlr.v4.runtime.Token;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
@@ -9,14 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
-import vn.hoidanit.jobhunter.domain.DTO.GetAccoutDTO;
-import vn.hoidanit.jobhunter.domain.DTO.RestLoginDto;
-import vn.hoidanit.jobhunter.domain.DTO.UserLoginDTO;
-import vn.hoidanit.jobhunter.domain.DTO.loginDTO;
+import vn.hoidanit.jobhunter.domain.res.GetAccoutDTO;
+import vn.hoidanit.jobhunter.domain.res.RestLoginDto;
+import vn.hoidanit.jobhunter.domain.res.UserLoginDTO;
+import vn.hoidanit.jobhunter.domain.req.reqLoginDTO;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.utils.SecurityUtil;
@@ -39,7 +37,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/login")
-    public ResponseEntity<RestLoginDto> login(@Valid @RequestBody loginDTO loginDTO) throws InvalidLogin {
+    public ResponseEntity<RestLoginDto> login(@Valid @RequestBody reqLoginDTO loginDTO) throws InvalidLogin {
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDTO.getUsername(), loginDTO.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);

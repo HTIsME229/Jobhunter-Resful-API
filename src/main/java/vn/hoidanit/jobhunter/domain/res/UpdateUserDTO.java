@@ -1,4 +1,4 @@
-package vn.hoidanit.jobhunter.domain.DTO;
+package vn.hoidanit.jobhunter.domain.res;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.EnumType;
@@ -7,25 +7,26 @@ import vn.hoidanit.jobhunter.utils.Enum.GenderEnum;
 
 import java.time.Instant;
 
-public class GetUserDTO {
+public class UpdateUserDTO {
     private long id;
     private String name;
-    private String email;
     private int age;
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
     private String address;
-    //    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a", timezone = "GMT+7")
-    private Instant createdAt;
-    //    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a", timezone = "GMT+7")
+    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a", timezone = "GMT+7")
     private Instant updatedAt;
 
-    public long getId() {
-        return id;
+    public UpdateUserDTO(String name, long id, int age, GenderEnum gender, String address, Instant updatedAt) {
+        this.name = name;
+        this.id = id;
+        this.age = age;
+        this.gender = gender;
+        this.address = address;
+        this.updatedAt = updatedAt;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public UpdateUserDTO() {
     }
 
     public Instant getUpdatedAt() {
@@ -34,22 +35,6 @@ public class GetUserDTO {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public GenderEnum getGender() {
-        return gender;
-    }
-
-    public void setGender(GenderEnum gender) {
-        this.gender = gender;
     }
 
     public String getAddress() {
@@ -68,12 +53,12 @@ public class GetUserDTO {
         this.age = age;
     }
 
-    public String getEmail() {
-        return email;
+    public GenderEnum getGender() {
+        return gender;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setGender(GenderEnum gender) {
+        this.gender = gender;
     }
 
     public String getName() {
@@ -82,5 +67,13 @@ public class GetUserDTO {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 }
