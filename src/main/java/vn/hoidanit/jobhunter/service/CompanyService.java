@@ -37,9 +37,11 @@ public class CompanyService {
         return this.companyRepository.findAll();
     }
 
-    public Page<Company> handleGetCompanyWithPaginate(Pageable pageable) {
-        Specification<Company> companySpecification = specificationsBuilder.whereAttributeContains("name", "FPT"
-        );
+    public Page<Company> handleGetCompanyWithPaginate(Pageable pageable, String name, String address) {
+
+        Specification<Company> companySpecification = Specification.where(null);
+        companySpecification = companySpecification.and(specificationsBuilder.whereAttributeContains("address", address));
+        companySpecification = companySpecification.and(specificationsBuilder.whereAttributeContains("name", name));
         return this.companyRepository.findAll(companySpecification, pageable);
     }
 

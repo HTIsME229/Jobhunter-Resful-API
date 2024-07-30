@@ -84,7 +84,7 @@ public class SecurityConfiguration {
 //                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()) //403
 //                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/login", "/", "/api/v1/auth/refresh").permitAll()
+                        .requestMatchers("/api/v1/auth/login", "/", "/api/v1/auth/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
                 .csrf(c -> c.disable())

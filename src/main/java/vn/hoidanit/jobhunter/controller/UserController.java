@@ -68,7 +68,7 @@ public class UserController {
             data.add(dto);
         }
         Meta meta = new Meta();
-        meta.setCurrent(pageable.getPageNumber());
+        meta.setCurrent(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());
         meta.setTotalsItems((int) User.getTotalElements());
         meta.setTotalsPage(User.getTotalPages());

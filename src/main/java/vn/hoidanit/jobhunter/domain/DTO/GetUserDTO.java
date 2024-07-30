@@ -15,9 +15,9 @@ public class GetUserDTO {
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
     private String address;
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a", timezone = "GMT+7")
+    //    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a", timezone = "GMT+7")
     private Instant createdAt;
-    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a", timezone = "GMT+7")
+    //    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a", timezone = "GMT+7")
     private Instant updatedAt;
 
     public long getId() {
