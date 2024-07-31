@@ -18,6 +18,16 @@ public class GetUserDTO {
     private Instant createdAt;
     //    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a", timezone = "GMT+7")
     private Instant updatedAt;
+    private UserCompany company;
+
+
+    public UserCompany getCompany() {
+        return this.company;
+    }
+
+    public void setCompany(UserCompany company) {
+        this.company = company;
+    }
 
     public long getId() {
         return id;

@@ -10,6 +10,7 @@ import vn.hoidanit.jobhunter.domain.Company;
 import java.util.List;
 
 public interface CompanyRepository extends JpaRepository<Company, Long>, JpaSpecificationExecutor<Company> {
+
     Page<Company> findAll(Specification<Company> specification, Pageable pageable);
 
     Page<Company> findAll(Pageable pageable);

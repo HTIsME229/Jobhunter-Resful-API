@@ -9,11 +9,19 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import vn.hoidanit.jobhunter.utils.SecurityUtil;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "companies")
 
 public class Company {
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +39,8 @@ public class Company {
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
-
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<User> users;
 
     @PrePersist
     public void handleCreate() {

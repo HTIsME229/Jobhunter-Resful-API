@@ -1,6 +1,4 @@
-package vn.hoidanit.jobhunter.domain;
-
-import java.util.List;
+package vn.hoidanit.jobhunter.domain.res;
 
 public class RestResponse<T> {
     private int statusCode;

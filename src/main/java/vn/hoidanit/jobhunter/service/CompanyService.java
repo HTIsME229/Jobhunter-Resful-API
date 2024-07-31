@@ -6,7 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.hoidanit.jobhunter.domain.Company;
+import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.repository.CompanyRepository;
+import vn.hoidanit.jobhunter.repository.UserRepository;
 import vn.hoidanit.jobhunter.service.Specfication.SpecificationsBuilder;
 
 import java.util.List;
@@ -16,12 +18,14 @@ import java.util.Optional;
 public class CompanyService {
     private final SpecificationsBuilder specificationsBuilder;
     private CompanyRepository companyRepository;
+    private UserRepository userRepository;
 
 
-    public CompanyService(CompanyRepository companyRepository, SpecificationsBuilder specificationsBuilder) {
+    public CompanyService(CompanyRepository companyRepository, SpecificationsBuilder specificationsBuilder, UserRepository userRepository) {
         this.companyRepository = companyRepository;
 
         this.specificationsBuilder = specificationsBuilder;
+        this.userRepository = userRepository;
     }
 
     public Company handleCreateCompany(Company company) {
@@ -59,6 +63,12 @@ public class CompanyService {
 
         if (!company.isPresent())
             throw new IllegalArgumentException("Company not found");
+        Company companyToDelete = company.get();
+        List<User> users = this.userRepository.findUserByCompany(companyToDelete);
+        for (User user : users) {
+            user.setCompany(null);
+            this.userRepository.save(user);
+        }
 
         this.companyRepository.deleteById(id);
 

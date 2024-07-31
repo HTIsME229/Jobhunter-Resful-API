@@ -21,6 +21,15 @@ public class User {
     @NotEmpty(message = "Email is not Empty ")
     private String email;
     private int age;
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
     private String address;
@@ -32,6 +41,9 @@ public class User {
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private Company company;
 
     @PrePersist
     public void handleCreate() {

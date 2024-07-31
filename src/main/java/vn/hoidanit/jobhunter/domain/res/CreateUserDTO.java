@@ -3,6 +3,7 @@ package vn.hoidanit.jobhunter.domain.res;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.utils.Enum.GenderEnum;
 
 import java.time.Instant;
@@ -17,11 +18,21 @@ public class CreateUserDTO {
     private String address;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a", timezone = "GMT+7")
     private Instant createdAt;
+    private UserCompany company;
+
+
+    public UserCompany getCompany() {
+        return this.company;
+    }
+
+    public void setCompany(UserCompany company) {
+        this.company = company;
+    }
 
     public CreateUserDTO() {
     }
 
-    public CreateUserDTO(long id, Instant createdAt, GenderEnum gender, String address, int age, String email, String name) {
+    public CreateUserDTO(long id, Instant createdAt, GenderEnum gender, String address, int age, String email, String name, UserCompany company) {
         this.id = id;
         this.createdAt = createdAt;
         this.gender = gender;
@@ -29,6 +40,7 @@ public class CreateUserDTO {
         this.age = age;
         this.email = email;
         this.name = name;
+        this.company = company;
     }
 
     public String getName() {

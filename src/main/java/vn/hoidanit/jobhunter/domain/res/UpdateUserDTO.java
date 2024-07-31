@@ -16,14 +16,25 @@ public class UpdateUserDTO {
     private String address;
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a", timezone = "GMT+7")
     private Instant updatedAt;
+    private UserCompany company;
 
-    public UpdateUserDTO(String name, long id, int age, GenderEnum gender, String address, Instant updatedAt) {
+    public UserCompany getCompany() {
+        return company;
+    }
+
+    public void setCompany(UserCompany company) {
+        this.company = company;
+    }
+
+
+    public UpdateUserDTO(String name, long id, int age, GenderEnum gender, String address, Instant updatedAt, UserCompany userCompany) {
         this.name = name;
         this.id = id;
         this.age = age;
         this.gender = gender;
         this.address = address;
         this.updatedAt = updatedAt;
+        this.company = userCompany;
     }
 
     public UpdateUserDTO() {

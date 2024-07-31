@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.res.*;
 import vn.hoidanit.jobhunter.service.UserService;
@@ -63,6 +64,10 @@ public class UserController {
             dto.setAddress(u.getAddress());
             dto.setCreatedAt(u.getCreatedAt());
             dto.setUpdatedAt(u.getUpdatedAt());
+            UserCompany userCompany = new UserCompany();
+            userCompany.setId(u.getCompany() != null ? u.getCompany().getId() : 0);
+            userCompany.setName(u.getCompany() != null ? u.getCompany().getName() : "");
+            dto.setCompany(userCompany);
             data.add(dto);
         }
         Meta meta = new Meta();

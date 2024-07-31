@@ -6,12 +6,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.hoidanit.jobhunter.domain.Company;
-import vn.hoidanit.jobhunter.domain.res.Meta;
-import vn.hoidanit.jobhunter.domain.res.RestPaginateDTO;
-import vn.hoidanit.jobhunter.domain.RestResponse;
+import vn.hoidanit.jobhunter.domain.User;
+import vn.hoidanit.jobhunter.domain.res.*;
 import vn.hoidanit.jobhunter.service.CompanyService;
 import vn.hoidanit.jobhunter.utils.annotation.ApiMessage;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,7 +38,14 @@ public class CompanyController {
         String name = optionalName.isPresent() ? optionalName.get() : "";
         String address = optionalAddresss.isPresent() ? optionalAddresss.get() : "";
         Page<Company> Company = this.companyService.handleGetCompanyWithPaginate(pageable, name, address);
+
         List<Company> listCompany = Company.getContent();
+        List<ResCompanyDTO> restCompanyDtos = new ArrayList<>();
+        for (Company company : listCompany) {
+            ResCompanyDTO resCompanyDTO = new ResCompanyDTO(company.getId(), company.getUpdatedBy(), company.getCreatedBy(), company.getCreatedAt(), company.getUpdatedAt(),
+                    company.getLogo(), company.getAddress(), company.getDescription(), company.getName());
+            restCompanyDtos.add(resCompanyDTO);
+        }
         Meta meta = new Meta();
         meta.setCurrent(pageable.getPageNumber() + 1);
         meta.setPageSize(pageable.getPageSize());
@@ -45,7 +53,7 @@ public class CompanyController {
         meta.setTotalsPage(Company.getTotalPages());
         RestPaginateDTO restPaginateDTO = new RestPaginateDTO();
         restPaginateDTO.setMeta(meta);
-        restPaginateDTO.setResult(listCompany);
+        restPaginateDTO.setResult(restCompanyDtos);
         return ResponseEntity.status(200).body(restPaginateDTO);
     }
 

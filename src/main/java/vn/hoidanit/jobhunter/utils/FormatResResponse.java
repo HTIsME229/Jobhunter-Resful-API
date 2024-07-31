@@ -9,11 +9,8 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import vn.hoidanit.jobhunter.domain.RestResponse;
+import vn.hoidanit.jobhunter.domain.res.RestResponse;
 import vn.hoidanit.jobhunter.utils.annotation.ApiMessage;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestControllerAdvice
 public class FormatResResponse implements ResponseBodyAdvice<Object> {
