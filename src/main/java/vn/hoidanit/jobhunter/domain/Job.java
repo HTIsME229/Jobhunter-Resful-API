@@ -21,6 +21,9 @@ public class Job {
     private LevelEnum level;
     @Column(columnDefinition = "MEDIUMTEXT")
     private String description;
+    private String location;
+
+
     private Instant startDate;
     private Instant endDate;
     private boolean Active;
@@ -28,12 +31,12 @@ public class Job {
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "company_id")
     private Company company;
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = "jobs")
-    @JoinTable(name = "skills", joinColumns = @JoinColumn(name = "job_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
+    @JoinTable(name = "job_skill", joinColumns = @JoinColumn(name = "job_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private List<Skills> skills;
 
     @PrePersist
@@ -49,6 +52,38 @@ public class Job {
         this.updatedAt = Instant.now();
         this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
         ;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public List<Skills> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(List<Skills> skills) {
+        this.skills = skills;
     }
 
     public long getId() {
