@@ -1,6 +1,7 @@
 package vn.hoidanit.jobhunter.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -39,6 +40,7 @@ public class Company {
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
+    @JsonIgnore
     @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<User> users;
 

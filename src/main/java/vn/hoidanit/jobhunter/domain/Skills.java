@@ -19,8 +19,8 @@ public class Skills {
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
+    @JsonIgnore
     @ManyToMany(mappedBy = "skills")
-
     private List<Job> jobs;
 
     @PrePersist
