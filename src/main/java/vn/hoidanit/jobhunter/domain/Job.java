@@ -18,6 +18,7 @@ public class Job {
     private String name;
     private double salary;
     private int quantity;
+    @Enumerated(EnumType.STRING)
     private LevelEnum level;
     @Column(columnDefinition = "MEDIUMTEXT")
     private String description;
@@ -38,6 +39,9 @@ public class Job {
     @JsonIgnoreProperties(value = "jobs")
     @JoinTable(name = "job_skill", joinColumns = @JoinColumn(name = "job_id"), inverseJoinColumns = @JoinColumn(name = "skill_id"))
     private List<Skills> skills;
+    @JsonIgnore
+    @OneToMany(mappedBy = "jobs")
+    private List<Resume> resumes;
 
     @PrePersist
     public void handleCreate() {

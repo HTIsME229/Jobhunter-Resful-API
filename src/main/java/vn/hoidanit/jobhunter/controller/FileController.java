@@ -73,6 +73,10 @@ public class FileController {
 
         Path path = Paths.get(uri);
 //        File file = path.toFile();
+        File tmpFile = path.toFile();
+        if (!tmpFile.exists() || !tmpFile.isFile()) {
+            throw new RuntimeException("File not found");
+        }
         File file = Files.exists(path) ? path.toFile() : null;
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");

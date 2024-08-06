@@ -1,6 +1,7 @@
 package vn.hoidanit.jobhunter.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -8,6 +9,7 @@ import vn.hoidanit.jobhunter.utils.Enum.GenderEnum;
 import vn.hoidanit.jobhunter.utils.SecurityUtil;
 
 import java.time.Instant;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -21,6 +23,9 @@ public class User {
     @NotEmpty(message = "Email is not Empty ")
     private String email;
     private int age;
+    @JsonIgnore
+    @OneToMany(mappedBy = "user")
+    private List<Resume> resumes;
 
     public Company getCompany() {
         return company;
