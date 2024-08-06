@@ -2,6 +2,7 @@ package vn.hoidanit.jobhunter.utils;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.MethodParameter;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -28,7 +29,9 @@ public class FormatResResponse implements ResponseBodyAdvice<Object> {
         int statusCode = servletResponses.getStatus();
         RestResponse res = new RestResponse();
 
-
+        if (body instanceof Resource) {
+            return body;
+        }
         if (body instanceof String) {
             return body;
         }
