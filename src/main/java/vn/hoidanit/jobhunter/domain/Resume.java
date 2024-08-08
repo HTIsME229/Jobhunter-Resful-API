@@ -27,6 +27,14 @@ public class Resume {
     @JoinColumn(name = "job_id")
     private Job job;
 
+    public Job getJob() {
+        return job;
+    }
+
+    public void setJob(Job job) {
+        this.job = job;
+    }
+
     @PrePersist
     public void handleCreate() {
 
