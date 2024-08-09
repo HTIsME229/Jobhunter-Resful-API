@@ -1,15 +1,14 @@
 package vn.hoidanit.jobhunter.controller;
 
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.hoidanit.jobhunter.domain.Job;
 import vn.hoidanit.jobhunter.domain.Resume;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.req.reqCreateResume;
-import vn.hoidanit.jobhunter.domain.res.CreateResumeDto;
-import vn.hoidanit.jobhunter.domain.res.GetResumeDto;
-import vn.hoidanit.jobhunter.domain.res.UpdateResumeDto;
+import vn.hoidanit.jobhunter.domain.res.*;
 import vn.hoidanit.jobhunter.repository.JobRepository;
 import vn.hoidanit.jobhunter.repository.UserRepository;
 import vn.hoidanit.jobhunter.service.ResumeService;
@@ -53,6 +52,14 @@ public class ResumeController {
     @GetMapping("/resumes/{id}")
     public ResponseEntity<GetResumeDto> GetResumesById(@PathVariable long id) {
         GetResumeDto res = this.resumeService.handleGetResume(id);
+        return ResponseEntity.ok(res);
+    }
+
+    @ApiMessage("Fetch Resume Success")
+    @GetMapping("/resumes")
+    public ResponseEntity<RestPaginateDTO> GetResumesWithPaginate(Pageable pageable) {
+        RestPaginateDTO res = this.resumeService.handleGetResumeWithPaginate(pageable);
+
         return ResponseEntity.ok(res);
     }
 

@@ -1,12 +1,12 @@
 package vn.hoidanit.jobhunter.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.hoidanit.jobhunter.domain.Job;
 import vn.hoidanit.jobhunter.domain.Resume;
 import vn.hoidanit.jobhunter.domain.User;
-import vn.hoidanit.jobhunter.domain.res.CreateResumeDto;
-import vn.hoidanit.jobhunter.domain.res.GetResumeDto;
-import vn.hoidanit.jobhunter.domain.res.UpdateResumeDto;
+import vn.hoidanit.jobhunter.domain.res.*;
 import vn.hoidanit.jobhunter.repository.JobRepository;
 import vn.hoidanit.jobhunter.repository.ResumeRepository;
 import vn.hoidanit.jobhunter.repository.UserRepository;
@@ -14,6 +14,8 @@ import vn.hoidanit.jobhunter.domain.req.reqCreateResume;
 import vn.hoidanit.jobhunter.utils.Enum.Status;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -91,6 +93,35 @@ public class ResumeService {
             );
             return getResumeDto;
         }
+
+
+    }
+
+    public RestPaginateDTO handleGetResumeWithPaginate(Pageable pageable) {
+        Page<Resume> resumePageList = this.resumeRepository.findAll(pageable);
+        List<GetResumeDto> resumeDtoList = new ArrayList<>();
+        List<Resume> resumeList = resumePageList.getContent();
+        for (Resume currentResume : resumeList) {
+            GetResumeDto.JobData jobData = new GetResumeDto.JobData();
+            Job currentJob = currentResume.getJob();
+            jobData.setId(currentJob.getId());
+            jobData.setName(currentJob.getName());
+            GetResumeDto.UserData userData = new GetResumeDto.UserData();
+            User currentUser = currentResume.getUser();
+            userData.setId(currentUser.getId());
+            userData.setName(currentUser.getName());
+            GetResumeDto getResumeDto = new GetResumeDto(currentResume.getId(), jobData, userData, currentResume.getUpdatedBy(), currentResume.getCreatedBy(), currentResume.getUpdatedAt(), currentResume.getCreatedAt(), currentResume.getStatus(), currentResume.getUrl(), currentResume.getEmail());
+            resumeDtoList.add(getResumeDto);
+        }
+        Meta meta = new Meta();
+        meta.setCurrent(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setTotalsItems((int) resumePageList.getTotalElements());
+        meta.setTotalsPage(resumePageList.getTotalPages());
+        RestPaginateDTO restPaginateDTO = new RestPaginateDTO();
+        restPaginateDTO.setMeta(meta);
+        restPaginateDTO.setResult(resumeDtoList);
+        return restPaginateDTO;
 
     }
 }
