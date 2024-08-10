@@ -88,9 +88,8 @@ public class ResumeService {
             GetResumeDto.UserData userData = new GetResumeDto.UserData();
             userData.setId(currentUser.getId());
             userData.setName(currentUser.getName());
-
-            GetResumeDto getResumeDto = new GetResumeDto(currentResume.getId(), jobData, userData, currentResume.getUpdatedBy(), currentResume.getCreatedBy(), currentResume.getUpdatedAt(), currentResume.getCreatedAt(), currentResume.getStatus(), currentResume.getUrl(), currentResume.getEmail()
-            );
+            String companyName = currentResume.getJob().getCompany().getName();
+            GetResumeDto getResumeDto = new GetResumeDto(currentResume.getId(), jobData, userData, currentResume.getUpdatedBy(), currentResume.getCreatedBy(), currentResume.getUpdatedAt(), currentResume.getCreatedAt(), currentResume.getStatus(), currentResume.getUrl(), currentResume.getEmail(), companyName);
             return getResumeDto;
         }
 
@@ -110,7 +109,8 @@ public class ResumeService {
             User currentUser = currentResume.getUser();
             userData.setId(currentUser.getId());
             userData.setName(currentUser.getName());
-            GetResumeDto getResumeDto = new GetResumeDto(currentResume.getId(), jobData, userData, currentResume.getUpdatedBy(), currentResume.getCreatedBy(), currentResume.getUpdatedAt(), currentResume.getCreatedAt(), currentResume.getStatus(), currentResume.getUrl(), currentResume.getEmail());
+            String companyName = currentResume.getJob().getCompany().getName();
+            GetResumeDto getResumeDto = new GetResumeDto(currentResume.getId(), jobData, userData, currentResume.getUpdatedBy(), currentResume.getCreatedBy(), currentResume.getUpdatedAt(), currentResume.getCreatedAt(), currentResume.getStatus(), currentResume.getUrl(), currentResume.getEmail(), companyName);
             resumeDtoList.add(getResumeDto);
         }
         Meta meta = new Meta();

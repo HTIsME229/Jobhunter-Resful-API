@@ -37,8 +37,11 @@ public class CompanyService {
         return this.companyRepository.save(company);
     }
 
-    public List<Company> handleGetAllCompany() {
-        return this.companyRepository.findAll();
+    public Company handleGetCompanyWithId(long id) {
+        Optional<Company> company = this.companyRepository.findById(id);
+        if (company.isPresent()) {
+            return company.get();
+        } else throw new RuntimeException("Company not found");
     }
 
     public Page<Company> handleGetCompanyWithPaginate(Pageable pageable, String name, String address) {

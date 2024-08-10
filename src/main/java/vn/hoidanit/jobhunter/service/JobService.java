@@ -46,11 +46,12 @@ public class JobService {
             }
         }
         newJob.setSkills(skillsList);
-        Optional<Company> company = companyRepository.findById(datajob.getCompany_id());
+        long id = (long) Integer.parseInt(datajob.getCompany().getId());
+        Optional<Company> company = companyRepository.findById(id);
         if (!company.isPresent()) {
-            throw new RuntimeException("company with id " + datajob.getCompany_id() + " doesn't exist");
+            throw new RuntimeException("company with id " + datajob.getCompany().getId() + " doesn't exist");
         }
-        newJob.setCompany(company.get());
+//        newJob.setCompany(company.get());
         newJob.setDescription(datajob.getDescription());
         newJob.setStartDate(datajob.getStartDate());
         newJob.setEndDate(datajob.getEndDate());
@@ -87,20 +88,33 @@ public class JobService {
         for (Skills skill : skillsList) {
             skillResList.add(skill.getName());
         }
-        Optional<Company> company = companyRepository.findById(datajob.getCompany_id());
+        Optional<Company> company = companyRepository.findById((long) Integer.parseInt(datajob.getCompany().getId()));
         if (!company.isPresent()) {
-            throw new RuntimeException("company with id " + datajob.getCompany_id() + " doesn't exist");
+            throw new RuntimeException("company with id " + datajob.getCompany().getId() + " doesn't exist");
         }
-        currentJob.setSkills(skillsList);
-        currentJob.setCompany(company.get());
-        currentJob.setDescription(datajob.getDescription());
-        currentJob.setStartDate(datajob.getStartDate());
-        currentJob.setEndDate(datajob.getEndDate());
-        currentJob.setLevel(datajob.getLevel());
-        currentJob.setName(datajob.getName());
-        currentJob.setSalary(datajob.getSalary());
-        currentJob.setLocation(datajob.getLocation());
-        currentJob.setQuantity(datajob.getQuantity());
+        if (skillsList != null && !skillsList.isEmpty()) {
+            currentJob.setSkills(skillsList);
+        }
+        if (company.isPresent()) {
+            currentJob.setCompany(company.get());
+        }
+        if (datajob.getDescription() != null)
+            currentJob.setDescription(datajob.getDescription());
+        if (datajob.getStartDate() != null)
+            currentJob.setStartDate(datajob.getStartDate());
+        if (datajob.getEndDate() != null)
+            currentJob.setEndDate(datajob.getEndDate());
+        if (datajob.getLevel() != null)
+            currentJob.setLevel(datajob.getLevel());
+        if (datajob.getName() != null)
+            currentJob.setName(datajob.getName());
+        if (datajob.getSalary() != 0)
+            currentJob.setSalary(datajob.getSalary());
+        if (datajob.getLocation() != null)
+            currentJob.setLocation(datajob.getLocation());
+        if (datajob.getQuantity() != 0)
+            currentJob.setQuantity(datajob.getQuantity());
+
         currentJob.setActive(datajob.isActive());
         Job SaveJob = jobRepository.save(currentJob);
 

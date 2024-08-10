@@ -33,6 +33,14 @@ public class CompanyController {
     }
 
     @ApiMessage("Fetch companies Success")
+    @GetMapping("/companies/{id}")
+    public ResponseEntity<Company> GetCompanies(@PathVariable Long id) {
+        Company company = this.companyService.handleGetCompanyWithId(id);
+        return ResponseEntity.status(200).body(company);
+
+    }
+
+    @ApiMessage("Fetch companies Success")
     @GetMapping("/companies")
     public ResponseEntity<RestPaginateDTO> GetAllCompaniesWithPaginate(Pageable pageable, @RequestParam("name") Optional<String> optionalName, @RequestParam("address") Optional<String> optionalAddresss) {
         String name = optionalName.isPresent() ? optionalName.get() : "";

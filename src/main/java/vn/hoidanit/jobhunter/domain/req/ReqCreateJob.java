@@ -20,16 +20,51 @@ public class ReqCreateJob {
     private Instant startDate;
     private Instant endDate;
     private boolean Active;
-    private long company_id;
+    private companyData company;
     private List<skill_id> skills;
 
+    public static class companyData {
+        private String id;
+        private String name;
+        private String logo;
 
-    public long getCompany_id() {
-        return company_id;
+        public companyData(String name, String id, String logo) {
+            this.name = name;
+            this.id = id;
+            this.logo = logo;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public String getLogo() {
+            return logo;
+        }
+
+        public void setLogo(String logo) {
+            this.logo = logo;
+        }
     }
 
-    public void setCompany_id(long company_id) {
-        this.company_id = company_id;
+    public companyData getCompany() {
+        return company;
+    }
+
+    public void setCompany(companyData company) {
+        this.company = company;
     }
 
     public List<skill_id> getSkills() {

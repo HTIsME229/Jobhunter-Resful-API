@@ -17,11 +17,19 @@ public class GetResumeDto {
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
-
+    private String companyName;
     private UserData user;
     private JobData job;
 
-    public GetResumeDto(long id, JobData job, UserData user, String updatedBy, String createdBy, Instant updatedAt, Instant createdAt, Status status, String url, String email) {
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public GetResumeDto(long id, JobData job, UserData user, String updatedBy, String createdBy, Instant updatedAt, Instant createdAt, Status status, String url, String email, String companyName) {
         this.id = id;
         this.job = job;
         this.user = user;
@@ -32,6 +40,7 @@ public class GetResumeDto {
         this.status = status;
         this.url = url;
         this.email = email;
+        this.companyName = companyName;
     }
 
     public long getId() {

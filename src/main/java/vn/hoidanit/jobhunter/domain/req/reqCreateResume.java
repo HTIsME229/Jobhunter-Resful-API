@@ -1,9 +1,12 @@
 package vn.hoidanit.jobhunter.domain.req;
 
+import jakarta.validation.constraints.NotBlank;
 import vn.hoidanit.jobhunter.utils.Enum.Status;
 
 public class reqCreateResume {
+    @NotBlank(message = "Email not empty")
     private String email;
+    @NotBlank(message = "URL not empty")
     private String url;
     private User_Id user;
     private Job_Id job;

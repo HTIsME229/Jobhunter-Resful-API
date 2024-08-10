@@ -2,6 +2,8 @@ package vn.hoidanit.jobhunter.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.hoidanit.jobhunter.domain.Job;
@@ -28,13 +30,15 @@ public class ResumeController {
 
     }
 
+    @ApiMessage("Create Resume Success")
     @PostMapping("/resumes")
     public ResponseEntity<CreateResumeDto> CreateResume(@RequestBody @Valid reqCreateResume resume) {
 
         CreateResumeDto res = this.resumeService.handleCreateResume(resume);
-        return ResponseEntity.ok(res);
+        return ResponseEntity.status(HttpStatus.CREATED).body(res);
     }
 
+    @ApiMessage("Update Resume Success")
     @PutMapping("/resumes")
     public ResponseEntity<UpdateResumeDto> UpdateResume(@RequestBody Resume resume) {
         UpdateResumeDto res = this.resumeService.handleUpdate(resume);
@@ -59,7 +63,6 @@ public class ResumeController {
     @GetMapping("/resumes")
     public ResponseEntity<RestPaginateDTO> GetResumesWithPaginate(Pageable pageable) {
         RestPaginateDTO res = this.resumeService.handleGetResumeWithPaginate(pageable);
-
         return ResponseEntity.ok(res);
     }
 
