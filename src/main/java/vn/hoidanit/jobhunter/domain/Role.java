@@ -1,9 +1,11 @@
 package vn.hoidanit.jobhunter.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 import java.time.Instant;
+import java.util.List;
 
 @Table(name = "roles")
 @Entity
@@ -19,6 +21,10 @@ public class Role {
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = "roles")
+    @JoinTable(name = "permission_role", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permisssion_id"))
+    private List<Permissions> permissions;
 
     public long getId() {
         return id;

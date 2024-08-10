@@ -1,8 +1,10 @@
 package vn.hoidanit.jobhunter.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.List;
 
 @Table(name = "permissions")
 @Entity
@@ -18,6 +20,8 @@ public class Permissions {
     private Instant updatedAt;
     private String createdBy;
     private String updatedBy;
+    @ManyToMany(mappedBy = "permissions")
+    private List<Role> roles;
 
     public Instant getUpdatedAt() {
         return updatedAt;
