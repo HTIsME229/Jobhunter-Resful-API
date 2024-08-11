@@ -27,6 +27,14 @@ public class Role {
     @JoinTable(name = "permission_role", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permisssion_id"))
     private List<Permissions> permissions;
 
+    public List<Permissions> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<Permissions> permissions) {
+        this.permissions = permissions;
+    }
+
     @PrePersist
     public void handleCreate() {
 

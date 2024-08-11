@@ -6,15 +6,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import vn.hoidanit.jobhunter.domain.Permissions;
+import vn.hoidanit.jobhunter.domain.Role;
+
 
 import java.util.List;
 
 @Repository
-public interface PermissionRepository extends JpaRepository<Permissions, Long>, JpaSpecificationExecutor<Permissions> {
-    boolean existsByMethodAndApiPathAndModule(String method, String apiPath, String module);
+public interface RoleRepository extends JpaRepository<Role, Long>, JpaSpecificationExecutor<Role> {
+    boolean existsByName(String name);
 
-    List<Permissions> findByIdIn(List<Long> ids);
+    List<Role> findByPermissions(Permissions permission);
 
-    Page<Permissions> findAll(Pageable pageable);
-
+    Page<Role> findAll(Pageable pageable);
 }

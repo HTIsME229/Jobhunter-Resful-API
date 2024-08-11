@@ -4,19 +4,24 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import vn.hoidanit.jobhunter.domain.Permissions;
+import vn.hoidanit.jobhunter.domain.Role;
 import vn.hoidanit.jobhunter.domain.res.Meta;
 import vn.hoidanit.jobhunter.domain.res.RestPaginateDTO;
 import vn.hoidanit.jobhunter.repository.PermissionRepository;
+import vn.hoidanit.jobhunter.repository.RoleRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 
 @Service
 public class PermissionService {
     private PermissionRepository permissionRepository;
+    private RoleRepository roleRepository;
 
-    public PermissionService(PermissionRepository permissionRepository) {
+    public PermissionService(PermissionRepository permissionRepository, RoleRepository roleRepository) {
         this.permissionRepository = permissionRepository;
+        this.roleRepository = roleRepository;
 
     }
 
@@ -61,7 +66,20 @@ public class PermissionService {
         Optional<Permissions> currentPermission = this.permissionRepository.findById(id);
         if (!currentPermission.isPresent()) {
             throw new RuntimeException("Permission not found");
-        } else
+        } else {
+            List<Role> roleList = this.roleRepository.findByPermissions(currentPermission.get());
+            for (Role role : roleList) {
+                List<Permissions> listPermission = role.getPermissions();
+                for (Permissions permission : listPermission) {
+                    if (permission.getName().equals(currentPermission.get().getName())) {
+                        listPermission.remove(permission);
+                        role.setPermissions(listPermission);
+                        this.roleRepository.save(role);
+                    }
+                }
+            }
             this.permissionRepository.delete(currentPermission.get());
+        }
+
     }
 }
