@@ -7,6 +7,19 @@ import vn.hoidanit.jobhunter.utils.Enum.GenderEnum;
 import java.time.Instant;
 
 public class GetUserDTO {
+    public GetUserDTO(long id, String name, String email, int age, GenderEnum gender, String address, Instant createdAt, Instant updatedAt, UserCompany company, UserRole role) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.age = age;
+        this.gender = gender;
+        this.address = address;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.company = company;
+        this.role = role;
+    }
+
     private long id;
     private String name;
     private String email;
@@ -19,7 +32,42 @@ public class GetUserDTO {
     //    @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a", timezone = "GMT+7")
     private Instant updatedAt;
     private UserCompany company;
+    private UserRole role;
 
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
+    public static class UserRole {
+        public UserRole(long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        private long id;
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        private String name;
+    }
 
     public UserCompany getCompany() {
         return this.company;

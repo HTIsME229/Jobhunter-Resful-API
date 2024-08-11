@@ -14,6 +14,7 @@ import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.utils.annotation.ApiMessage;
 import vn.hoidanit.jobhunter.utils.error.IdInvalidExeption;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,19 +56,12 @@ public class UserController {
         List<User> listUser = User.getContent();
         List<GetUserDTO> data = new ArrayList<>();
         for (User u : listUser) {
-            GetUserDTO dto = new GetUserDTO();
-            dto.setId(u.getId());
-            dto.setEmail(u.getEmail());
-            dto.setName(u.getName());
-            dto.setAge(u.getAge());
-            dto.setGender(u.getGender());
-            dto.setAddress(u.getAddress());
-            dto.setCreatedAt(u.getCreatedAt());
-            dto.setUpdatedAt(u.getUpdatedAt());
             UserCompany userCompany = new UserCompany();
             userCompany.setId(u.getCompany() != null ? u.getCompany().getId() : 0);
             userCompany.setName(u.getCompany() != null ? u.getCompany().getName() : "");
-            dto.setCompany(userCompany);
+            GetUserDTO.UserRole userRole = new GetUserDTO.UserRole(u.getRole().getId(), u.getRole().getName());
+            GetUserDTO dto = new GetUserDTO(u.getId(), u.getName(), u.getEmail(), u.getAge(), u.getGender(), u.getAddress(), u.getCreatedAt(), u.getUpdatedAt()
+                    , userCompany, userRole);
             data.add(dto);
         }
         Meta meta = new Meta();

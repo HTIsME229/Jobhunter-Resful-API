@@ -9,6 +9,7 @@ import vn.hoidanit.jobhunter.utils.Enum.GenderEnum;
 import vn.hoidanit.jobhunter.utils.SecurityUtil;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -27,14 +28,6 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Resume> resumes;
 
-    public Company getCompany() {
-        return company;
-    }
-
-    public void setCompany(Company company) {
-        this.company = company;
-    }
-
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
     private String address;
@@ -49,6 +42,34 @@ public class User {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    public List<Resume> getResumes() {
+        return resumes;
+    }
+
+    public void setResumes(List<Resume> resumes) {
+        this.resumes = resumes;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
 
     @PrePersist
     public void handleCreate() {

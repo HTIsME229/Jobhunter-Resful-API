@@ -36,4 +36,10 @@ public class RoleController {
     public ResponseEntity<RestPaginateDTO> getAllRoles(Pageable pageable) {
         return ResponseEntity.ok(this.roleService.handleGetRoleWithPaginate(pageable));
     }
+
+    @DeleteMapping("/roles/{id}")
+    public ResponseEntity<Void> deleteRole(@PathVariable long id) {
+        this.roleService.handleDeleteRole(id);
+        return ResponseEntity.ok().build();
+    }
 }

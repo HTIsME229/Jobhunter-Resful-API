@@ -17,6 +17,41 @@ public class UpdateUserDTO {
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss a", timezone = "GMT+7")
     private Instant updatedAt;
     private UserCompany company;
+    private UserRole role;
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
+    }
+
+    public static class UserRole {
+        private long id;
+        private String name;
+
+        public UserRole(long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
 
     public UserCompany getCompany() {
         return company;
@@ -26,16 +61,17 @@ public class UpdateUserDTO {
         this.company = company;
     }
 
-
-    public UpdateUserDTO(String name, long id, int age, GenderEnum gender, String address, Instant updatedAt, UserCompany userCompany) {
-        this.name = name;
+    public UpdateUserDTO(long id, String name, GenderEnum gender, int age, String address, Instant updatedAt, UserCompany company, UserRole role) {
         this.id = id;
-        this.age = age;
+        this.name = name;
         this.gender = gender;
+        this.age = age;
         this.address = address;
         this.updatedAt = updatedAt;
-        this.company = userCompany;
+        this.company = company;
+        this.role = role;
     }
+
 
     public UpdateUserDTO() {
     }

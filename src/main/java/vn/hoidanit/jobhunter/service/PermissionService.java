@@ -69,14 +69,7 @@ public class PermissionService {
         } else {
             List<Role> roleList = this.roleRepository.findByPermissions(currentPermission.get());
             for (Role role : roleList) {
-                List<Permissions> listPermission = role.getPermissions();
-                for (Permissions permission : listPermission) {
-                    if (permission.getName().equals(currentPermission.get().getName())) {
-                        listPermission.remove(permission);
-                        role.setPermissions(listPermission);
-                        this.roleRepository.save(role);
-                    }
-                }
+                role.getPermissions().remove(currentPermission.get());
             }
             this.permissionRepository.delete(currentPermission.get());
         }

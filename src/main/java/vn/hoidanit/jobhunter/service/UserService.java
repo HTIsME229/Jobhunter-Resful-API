@@ -12,9 +12,12 @@ import vn.hoidanit.jobhunter.domain.res.UpdateUserDTO;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.res.UserCompany;
 import vn.hoidanit.jobhunter.repository.CompanyRepository;
+import vn.hoidanit.jobhunter.repository.RoleRepository;
 import vn.hoidanit.jobhunter.repository.UserRepository;
 import vn.hoidanit.jobhunter.service.Specfication.SpecificationsBuilder;
+import vn.hoidanit.jobhunter.utils.Enum.GenderEnum;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,12 +27,16 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     SpecificationsBuilder specificationsBuilder;
     CompanyRepository companyRepository;
+    RoleRepository roleRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, SpecificationsBuilder specificationsBuilder, CompanyRepository companyRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, SpecificationsBuilder specificationsBuilder, CompanyRepository companyRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.specificationsBuilder = specificationsBuilder;
         this.companyRepository = companyRepository;
+        this.roleRepository = roleRepository;
+
+
     }
 
     public CreateUserDTO handleSaveuUser(User datauser) {
@@ -51,6 +58,8 @@ public class UserService {
                 throw new RuntimeException("Company not found");
             user.setCompany(company.get());
         }
+        user.setRole(this.roleRepository.findById(datauser.getRole().getId()).orElse(null));
+
         user = this.userRepository.save(user);
 
         UserCompany userCompany = new UserCompany();
@@ -73,19 +82,13 @@ public class UserService {
 
         Optional<User> userData = userRepository.findById(id);
         if (userData.isPresent()) {
-            GetUserDTO res = new GetUserDTO();
-            res.setId(userData.get().getId());
-            res.setName(userData.get().getName());
-            res.setAge(userData.get().getAge());
-            res.setGender(userData.get().getGender());
-            res.setAddress(userData.get().getAddress());
-            res.setEmail(userData.get().getEmail());
-            res.setCreatedAt(userData.get().getCreatedAt());
-            res.setUpdatedAt(userData.get().getUpdatedAt());
+
             UserCompany userCompany = new UserCompany();
             userCompany.setId(userData.get().getCompany().getId());
             userCompany.setName(userData.get().getCompany().getName());
-            res.setCompany(userCompany);
+            GetUserDTO.UserRole userRole = new GetUserDTO.UserRole(userData.get().getRole().getId(), userData.get().getRole().getName());
+            GetUserDTO res = new GetUserDTO(userData.get().getId(), userData.get().getName(), userData.get().getEmail(), userData.get().getAge(), userData.get().getGender(), userData.get().getAddress(), userData.get().getCreatedAt(), userData.get().getUpdatedAt()
+                    , userCompany, userRole);
             return res;
         }
         throw new RuntimeException("User With " + id + " not found");
@@ -116,11 +119,13 @@ public class UserService {
             currentUser.get().setName(dataUser.getName());
             currentUser.get().setGender(dataUser.getGender());
             currentUser.get().setCompany(company.isPresent() ? company.get() : null);
+            currentUser.get().setRole(roleRepository.findById(dataUser.getRole().getId()).orElse(null));
             User user = userRepository.save(currentUser.get());
             UserCompany userCompany = new UserCompany();
             userCompany.setId(user.getCompany().getId());
             userCompany.setName(user.getCompany().getName());
-            UpdateUserDTO updateUserDTO = new UpdateUserDTO(dataUser.getName(), user.getId(), dataUser.getAge(), dataUser.getGender(), dataUser.getAddress(), user.getUpdatedAt(), userCompany);
+            UpdateUserDTO.UserRole userRole = new UpdateUserDTO.UserRole(user.getRole().getId(), user.getRole().getName());
+            UpdateUserDTO updateUserDTO = new UpdateUserDTO(user.getId(), user.getName(), user.getGender(), user.getAge(), user.getAddress(), user.getUpdatedAt(), userCompany, userRole);
             return updateUserDTO;
 
         } else throw new RuntimeException("User with id " + dataUser.getId() + " not found");
