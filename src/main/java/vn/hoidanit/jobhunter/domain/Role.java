@@ -3,6 +3,7 @@ package vn.hoidanit.jobhunter.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import vn.hoidanit.jobhunter.utils.SecurityUtil;
 
 import java.time.Instant;
 import java.util.List;
@@ -25,6 +26,21 @@ public class Role {
     @JsonIgnoreProperties(value = "roles")
     @JoinTable(name = "permission_role", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permisssion_id"))
     private List<Permissions> permissions;
+
+    @PrePersist
+    public void handleCreate() {
+
+        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+        this.createdAt = Instant.now();
+
+    }
+
+    @PreUpdate
+    public void handleUpdate() {
+        this.updatedAt = Instant.now();
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+        ;
+    }
 
     public long getId() {
         return id;

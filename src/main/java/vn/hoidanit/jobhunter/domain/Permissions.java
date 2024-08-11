@@ -2,6 +2,7 @@ package vn.hoidanit.jobhunter.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import vn.hoidanit.jobhunter.utils.SecurityUtil;
 
 import java.time.Instant;
 import java.util.List;
@@ -22,6 +23,21 @@ public class Permissions {
     private String updatedBy;
     @ManyToMany(mappedBy = "permissions")
     private List<Role> roles;
+
+    @PrePersist
+    public void handleCreate() {
+
+        this.createdBy = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+        this.createdAt = Instant.now();
+
+    }
+
+    @PreUpdate
+    public void handleUpdate() {
+        this.updatedAt = Instant.now();
+        this.updatedBy = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : "";
+        ;
+    }
 
     public Instant getUpdatedAt() {
         return updatedAt;
