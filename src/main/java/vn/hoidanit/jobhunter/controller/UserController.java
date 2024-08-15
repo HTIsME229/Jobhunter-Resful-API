@@ -59,7 +59,7 @@ public class UserController {
             UserCompany userCompany = new UserCompany();
             userCompany.setId(u.getCompany() != null ? u.getCompany().getId() : 0);
             userCompany.setName(u.getCompany() != null ? u.getCompany().getName() : "");
-            GetUserDTO.UserRole userRole = new GetUserDTO.UserRole(u.getRole().getId(), u.getRole().getName());
+            GetUserDTO.UserRole userRole = new GetUserDTO.UserRole(u.getRole() != null ? u.getRole().getId() : 0, u.getRole() != null ? u.getRole().getName() : "");
             GetUserDTO dto = new GetUserDTO(u.getId(), u.getName(), u.getEmail(), u.getAge(), u.getGender(), u.getAddress(), u.getCreatedAt(), u.getUpdatedAt()
                     , userCompany, userRole);
             data.add(dto);
@@ -90,4 +90,5 @@ public class UserController {
         UpdateUserDTO userUpdate = this.userService.handleUpdateUser(datauser);
         return ResponseEntity.status(HttpStatus.OK).body(userUpdate);
     }
+
 }

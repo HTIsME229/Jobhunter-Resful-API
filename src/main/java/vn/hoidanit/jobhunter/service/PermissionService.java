@@ -10,6 +10,7 @@ import vn.hoidanit.jobhunter.domain.res.RestPaginateDTO;
 import vn.hoidanit.jobhunter.repository.PermissionRepository;
 import vn.hoidanit.jobhunter.repository.RoleRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +35,7 @@ public class PermissionService {
         newPermission.setApiPath(permission.getApiPath());
         newPermission.setMethod(permission.getMethod());
         newPermission.setModule(permission.getModule());
+
         return this.permissionRepository.save(newPermission);
     }
 
@@ -42,6 +44,10 @@ public class PermissionService {
         if (!currentPermission.isPresent()) {
             throw new RuntimeException("Permission not found");
         }
+        if (currentPermission.get().getName().equals(permission.getName())) {
+            throw new RuntimeException("Permission already exists");
+        }
+
         currentPermission.get().setName(permission.getName());
         currentPermission.get().setApiPath(permission.getApiPath());
         currentPermission.get().setMethod(permission.getMethod());

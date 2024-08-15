@@ -3,6 +3,7 @@ package vn.hoidanit.jobhunter.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.Job;
 import vn.hoidanit.jobhunter.domain.Resume;
 import vn.hoidanit.jobhunter.domain.User;
@@ -11,9 +12,8 @@ import vn.hoidanit.jobhunter.repository.JobRepository;
 import vn.hoidanit.jobhunter.repository.ResumeRepository;
 import vn.hoidanit.jobhunter.repository.UserRepository;
 import vn.hoidanit.jobhunter.domain.req.reqCreateResume;
-import vn.hoidanit.jobhunter.utils.Enum.Status;
+import vn.hoidanit.jobhunter.utils.SecurityUtil;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -97,7 +97,52 @@ public class ResumeService {
     }
 
     public RestPaginateDTO handleGetResumeWithPaginate(Pageable pageable) {
+        String email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : null;
+
         Page<Resume> resumePageList = this.resumeRepository.findAll(pageable);
+        if (email != null) {
+            User user = this.userRepository.findByEmail(email);
+            if (user != null) {
+                Company company = user.getCompany();
+
+                if (company != null) {
+                    List<Job> listJob = company.getJobs();
+                    resumePageList = this.resumeRepository.findByJobIn(listJob, pageable);
+                }
+            } else throw new RuntimeException("User with email" + email + "not found");
+        }
+        List<GetResumeDto> resumeDtoList = new ArrayList<>();
+        List<Resume> resumeList = resumePageList.getContent();
+        for (Resume currentResume : resumeList) {
+            GetResumeDto.JobData jobData = new GetResumeDto.JobData();
+            Job currentJob = currentResume.getJob();
+            jobData.setId(currentJob.getId());
+            jobData.setName(currentJob.getName());
+            GetResumeDto.UserData userData = new GetResumeDto.UserData();
+            User currentUser = currentResume.getUser();
+            userData.setId(currentUser.getId());
+            userData.setName(currentUser.getName());
+            String companyName = currentResume.getJob().getCompany().getName();
+            GetResumeDto getResumeDto = new GetResumeDto(currentResume.getId(), jobData, userData, currentResume.getUpdatedBy(), currentResume.getCreatedBy(), currentResume.getUpdatedAt(), currentResume.getCreatedAt(), currentResume.getStatus(), currentResume.getUrl(), currentResume.getEmail(), companyName);
+            resumeDtoList.add(getResumeDto);
+        }
+        Meta meta = new Meta();
+        meta.setCurrent(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setTotalsItems((int) resumePageList.getTotalElements());
+        meta.setTotalsPage(resumePageList.getTotalPages());
+        RestPaginateDTO restPaginateDTO = new RestPaginateDTO();
+        restPaginateDTO.setMeta(meta);
+        restPaginateDTO.setResult(resumeDtoList);
+        return restPaginateDTO;
+
+    }
+
+    public RestPaginateDTO handleGetResumeWithPaginateByUser(Pageable pageable) {
+        String Email = SecurityUtil.getCurrentUserLogin().isPresent() ? SecurityUtil.getCurrentUserLogin().get() : null;
+        User user = this.userRepository.findByEmail(Email);
+
+        Page<Resume> resumePageList = this.resumeRepository.findByUser(pageable, user);
         List<GetResumeDto> resumeDtoList = new ArrayList<>();
         List<Resume> resumeList = resumePageList.getContent();
         for (Resume currentResume : resumeList) {

@@ -39,6 +39,24 @@ public class UserService {
 
     }
 
+    public CreateUserDTO handleRegister(User datauser) {
+        if (this.userRepository.existsByEmail(datauser.getEmail())) {
+            throw new RuntimeException(datauser.getEmail() + " is already in use");
+        }
+        User user = new User();
+        user.setEmail(datauser.getEmail());
+        user.setName(datauser.getName());
+        user.setAge(datauser.getAge());
+        user.setGender(datauser.getGender());
+        user.setAddress(datauser.getAddress());
+        user.setPassword(this.passwordEncoder.encode(datauser.getPassword()));
+        user = this.userRepository.save(user);
+        UserCompany userCompany = new UserCompany();
+        CreateUserDTO res = new CreateUserDTO(user.getId(), user.getCreatedAt(), user.getGender(), user.getAddress(), user.getAge(),
+                user.getEmail(), user.getName(), userCompany);
+        return res;
+    }
+
     public CreateUserDTO handleSaveuUser(User datauser) {
         if (this.userRepository.existsByEmail(datauser.getEmail())) {
             throw new RuntimeException(datauser.getEmail() + " is already in use");
@@ -112,7 +130,11 @@ public class UserService {
 
     public UpdateUserDTO handleUpdateUser(User dataUser) {
         Optional<User> currentUser = userRepository.findById(dataUser.getId());
-        Optional<Company> company = this.companyRepository.findById(dataUser.getCompany().getId());
+        long companyId = 0;
+        if (dataUser.getCompany() != null) {
+            companyId = dataUser.getCompany().getId();
+        }
+        Optional<Company> company = this.companyRepository.findById(companyId);
         if (currentUser.isPresent()) {
             currentUser.get().setAddress(dataUser.getAddress());
             currentUser.get().setAge(dataUser.getAge());
@@ -122,8 +144,11 @@ public class UserService {
             currentUser.get().setRole(roleRepository.findById(dataUser.getRole().getId()).orElse(null));
             User user = userRepository.save(currentUser.get());
             UserCompany userCompany = new UserCompany();
-            userCompany.setId(user.getCompany().getId());
-            userCompany.setName(user.getCompany().getName());
+            if (user.getCompany() != null) {
+                userCompany.setId(user.getCompany().getId());
+                userCompany.setName(user.getCompany().getName());
+            }
+
             UpdateUserDTO.UserRole userRole = new UpdateUserDTO.UserRole(user.getRole().getId(), user.getRole().getName());
             UpdateUserDTO updateUserDTO = new UpdateUserDTO(user.getId(), user.getName(), user.getGender(), user.getAge(), user.getAddress(), user.getUpdatedAt(), userCompany, userRole);
             return updateUserDTO;

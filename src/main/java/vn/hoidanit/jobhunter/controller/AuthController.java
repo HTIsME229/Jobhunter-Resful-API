@@ -1,8 +1,10 @@
 package vn.hoidanit.jobhunter.controller;
 
 import jakarta.validation.Valid;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -11,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import vn.hoidanit.jobhunter.domain.res.CreateUserDTO;
 import vn.hoidanit.jobhunter.domain.res.GetAccoutDTO;
 import vn.hoidanit.jobhunter.domain.res.RestLoginDto;
 import vn.hoidanit.jobhunter.domain.res.UserLoginDTO;
@@ -51,9 +54,10 @@ public class AuthController {
         String Email = SecurityContextHolder.getContext().getAuthentication().getName();
 //            Create Refresh Token
         User userLogin = this.userService.getUserByEmail(Email);
-        UserLoginDTO userLoginDTO = new UserLoginDTO(userLogin.getEmail(), userLogin.getName(), userLogin.getId());
+
+        UserLoginDTO userLoginDTO = new UserLoginDTO(userLogin.getEmail(), userLogin.getName(), userLogin.getId(), userLogin.getRole());
         restLoginDto.setUser(userLoginDTO);
-        String AccessToken = this.securityUtil.CreateAccessToken(userLogin.getEmail(), userLoginDTO);
+        String AccessToken = this.securityUtil.CreateAccessToken(userLogin.getEmail(), restLoginDto);
         restLoginDto.setAccess_token(AccessToken);
         String refreshToken = this.securityUtil.CreateRefreshToken(Email, restLoginDto);
         this.userService.UpdateUserToken(refreshToken, Email);
@@ -68,7 +72,8 @@ public class AuthController {
     public ResponseEntity<GetAccoutDTO> getAccount() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = this.userService.getUserByEmail(email);
-        UserLoginDTO userLoginDTO = new UserLoginDTO(currentUser.getEmail(), currentUser.getName(), currentUser.getId());
+
+        UserLoginDTO userLoginDTO = new UserLoginDTO(currentUser.getEmail(), currentUser.getName(), currentUser.getId(), currentUser.getRole());
         GetAccoutDTO res = new GetAccoutDTO();
         res.setUser(userLoginDTO);
         return ResponseEntity.ok(res);
@@ -81,12 +86,15 @@ public class AuthController {
         Jwt tokenDecode = this.securityUtil.checkValidRefreshToken(refresh_token);
         String email = tokenDecode.getSubject();
         User currentUser = this.userService.handleFindByEmailAndRefreshToken(email, refresh_token);
+
         if (currentUser != null) {
             RestLoginDto restLoginDto = new RestLoginDto();
-            UserLoginDTO userLoginDTO = new UserLoginDTO(currentUser.getEmail(), currentUser.getName(), currentUser.getId());
-            String AccessToken = this.securityUtil.CreateAccessToken(currentUser.getEmail(), userLoginDTO);
-            restLoginDto.setAccess_token(AccessToken);
+
+            UserLoginDTO userLoginDTO = new UserLoginDTO(currentUser.getEmail(), currentUser.getName(), currentUser.getId(), currentUser.getRole());
             restLoginDto.setUser(userLoginDTO);
+            String AccessToken = this.securityUtil.CreateAccessToken(currentUser.getEmail(), restLoginDto);
+            restLoginDto.setAccess_token(AccessToken);
+
             String newRefreshToken = this.securityUtil.CreateRefreshToken(currentUser.getEmail(), restLoginDto);
             this.userService.UpdateUserToken(newRefreshToken, currentUser.getEmail());
             ResponseCookie responseCookie = ResponseCookie.from("refresh_token", newRefreshToken).httpOnly(true).path("/").maxAge(refreshTokenExpiration).build();
@@ -98,7 +106,7 @@ public class AuthController {
     }
 
     @ApiMessage("Logout  Success")
-    @GetMapping("/logout")
+    @PostMapping("/auth/logout")
     public ResponseEntity<Void> Logout() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         User currentUser = this.userService.getUserByEmail(email);
@@ -107,6 +115,14 @@ public class AuthController {
         }
 
         return ResponseEntity.ok().build();
+    }
+
+    @ApiMessage("Create New User Success ")
+    @PostMapping("/auth/register")
+    public ResponseEntity<CreateUserDTO> Register(@Valid @RequestBody User datauser) {
+        CreateUserDTO newUser = this.userService.handleRegister(datauser);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
 }

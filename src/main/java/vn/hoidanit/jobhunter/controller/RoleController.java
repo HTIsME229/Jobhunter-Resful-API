@@ -42,4 +42,10 @@ public class RoleController {
         this.roleService.handleDeleteRole(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/roles/{id}")
+    public ResponseEntity<Role> getRole(@PathVariable long id) {
+        return ResponseEntity.ok(this.roleService.handleGetRoleById(id)
+        );
+    }
 }

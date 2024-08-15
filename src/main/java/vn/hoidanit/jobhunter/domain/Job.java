@@ -33,6 +33,8 @@ public class Job {
     private String createdBy;
     private String updatedBy;
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnoreProperties(value = "jobs")
+
     @JoinColumn(name = "company_id")
     private Company company;
     @ManyToMany(fetch = FetchType.LAZY)
@@ -42,6 +44,15 @@ public class Job {
     @JsonIgnore
     @OneToMany(mappedBy = "job")
     private List<Resume> resumes;
+
+
+    public List<Resume> getResumes() {
+        return resumes;
+    }
+
+    public void setResumes(List<Resume> resumes) {
+        this.resumes = resumes;
+    }
 
     @PrePersist
     public void handleCreate() {

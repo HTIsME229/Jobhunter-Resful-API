@@ -2,6 +2,7 @@ package vn.hoidanit.jobhunter.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.Job;
@@ -13,9 +14,8 @@ import vn.hoidanit.jobhunter.domain.res.UpdateJobDto;
 import vn.hoidanit.jobhunter.repository.CompanyRepository;
 import vn.hoidanit.jobhunter.repository.JobRepository;
 import vn.hoidanit.jobhunter.repository.SkillsRepository;
-import vn.hoidanit.jobhunter.utils.Enum.LevelEnum;
+import vn.hoidanit.jobhunter.service.Specfication.SpecificationsBuilder;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,11 +25,13 @@ public class JobService {
     private JobRepository jobRepository;
     private SkillsRepository skillsRepository;
     private CompanyRepository companyRepository;
+    private SpecificationsBuilder specificationsBuilder;
 
-    public JobService(JobRepository jobRepository, SkillsRepository skillsRepository, CompanyRepository companyRepository) {
+    public JobService(JobRepository jobRepository, SkillsRepository skillsRepository, CompanyRepository companyRepository, SpecificationsBuilder specificationsBuilder) {
         this.jobRepository = jobRepository;
         this.skillsRepository = skillsRepository;
         this.companyRepository = companyRepository;
+        this.specificationsBuilder = specificationsBuilder;
     }
 
     public CreateJobDto handleCreate(ReqCreateJob datajob) {
@@ -140,8 +142,17 @@ public class JobService {
 
     }
 
-    public Page<Job> handleGetJobsWithPaginate(Pageable pageable) {
-        return this.jobRepository.findAll(pageable);
+    public Page<Job> handleGetJobsWithPaginate(Pageable pageable, List<Skills> skillsList, List<String> location) {
+        Specification<Job> jobSpecification = Specification.where(null);
+        if (location != null && !location.isEmpty()) {
+            jobSpecification = jobSpecification.and(specificationsBuilder.whereAttributewhereAttributeIn("location", location));
+
+        }
+        if (skillsList != null && !skillsList.isEmpty()) {
+            jobSpecification = jobSpecification.and(specificationsBuilder.whereAttributewhereAttributeObjectIn("skills", skillsList));
+        }
+
+        return this.jobRepository.findAll(jobSpecification, pageable);
     }
 
 }

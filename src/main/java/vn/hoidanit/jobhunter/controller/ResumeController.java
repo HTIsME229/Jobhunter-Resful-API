@@ -62,7 +62,15 @@ public class ResumeController {
     @ApiMessage("Fetch Resume Success")
     @GetMapping("/resumes")
     public ResponseEntity<RestPaginateDTO> GetResumesWithPaginate(Pageable pageable) {
+
         RestPaginateDTO res = this.resumeService.handleGetResumeWithPaginate(pageable);
+        return ResponseEntity.ok(res);
+    }
+
+    @ApiMessage("Fetch Resume Success")
+    @PostMapping("/resumes/by-user")
+    public ResponseEntity<RestPaginateDTO> GetResumesWithPaginateByUser(Pageable pageable) {
+        RestPaginateDTO res = this.resumeService.handleGetResumeWithPaginateByUser(pageable);
         return ResponseEntity.ok(res);
     }
 

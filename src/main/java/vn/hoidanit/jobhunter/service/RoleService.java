@@ -56,7 +56,6 @@ public class RoleService {
         currentRole.get().setName(role.getName());
         currentRole.get().setDescription(role.getDescription());
         currentRole.get().setActive(role.isActive());
-
         currentRole.get().setPermissions(permissionList);
         return this.roleRepository.save(currentRole.get());
 
@@ -81,5 +80,13 @@ public class RoleService {
             throw new RuntimeException("Role does not exist");
         }
         this.roleRepository.deleteById(id);
+    }
+
+    public Role handleGetRoleById(long id) {
+        Optional<Role> currentRole = this.roleRepository.findById(id);
+        if (!currentRole.isPresent()) {
+            throw new RuntimeException("Role does not exist");
+        }
+        return currentRole.get();
     }
 }

@@ -1,6 +1,7 @@
 package vn.hoidanit.jobhunter.utils;
 
 import com.nimbusds.jose.util.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -9,8 +10,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Service;
+import vn.hoidanit.jobhunter.domain.Permissions;
+import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.res.RestLoginDto;
 import vn.hoidanit.jobhunter.domain.res.UserLoginDTO;
+import vn.hoidanit.jobhunter.service.UserService;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -22,6 +26,8 @@ import java.util.Optional;
 
 @Service
 public class SecurityUtil {
+    @Autowired
+    private UserService userService;
     private final JwtEncoder jwtEncoder;
 
     public SecurityUtil(JwtEncoder jwtEncoder) {
@@ -54,11 +60,20 @@ public class SecurityUtil {
     }
 
 
-    public String CreateAccessToken(String email, UserLoginDTO userLoginDTO) {
-        Instant now = Instant.now();
+    public String CreateAccessToken(String email, RestLoginDto restLoginDto) {
+        RestLoginDto.UserInsideToken userToken = new RestLoginDto.UserInsideToken(restLoginDto.getUser().getId(), restLoginDto.getUser().getName(), restLoginDto.getUser().getEmail());
+        User user = this.userService.getUserByEmail(restLoginDto.getUser().getEmail());
         List<String> listAuthority = new ArrayList<String>();
-        listAuthority.add("ROLE_USER_CREATE");
-        listAuthority.add("ROLE_USER_UPDATE");
+
+
+        if (user != null) {
+            List<Permissions> permissionsList = user.getRole().getPermissions();
+            for (Permissions permissions : permissionsList) {
+                listAuthority.add(permissions.getName());
+            }
+        }
+        Instant now = Instant.now();
+
         Instant validity = now.plus(this.accessTokenExpiration, ChronoUnit.SECONDS);
 
         // @formatter:off
@@ -66,7 +81,7 @@ public class SecurityUtil {
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(email)
-                .claim("user", userLoginDTO)
+                .claim("user", userToken)
                 .claim("permission", listAuthority)
                 .build();
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
@@ -74,6 +89,7 @@ public class SecurityUtil {
                 claims)).getTokenValue();
     }
     public String CreateRefreshToken(String email,RestLoginDto restLoginDto) {
+        RestLoginDto.UserInsideToken userToken = new RestLoginDto.UserInsideToken(restLoginDto.getUser().getId(), restLoginDto.getUser().getName(), restLoginDto.getUser().getEmail());
         Instant now = Instant.now();
         Instant validity = now.plus(this.refreshTokenExpiration, ChronoUnit.SECONDS);
 
@@ -82,7 +98,7 @@ public class SecurityUtil {
                 .issuedAt(now)
                 .expiresAt(validity)
                 .subject(email)
-                .claim("user", restLoginDto.getUser())
+                .claim("user", userToken)
                 .build();
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader,

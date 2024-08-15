@@ -10,6 +10,16 @@ import java.util.List;
 @Table(name = "permissions")
 @Entity
 public class Permissions {
+    public Permissions(String name, String apiPath, String method, String module) {
+        this.name = name;
+        this.apiPath = apiPath;
+        this.method = method;
+        this.module = module;
+    }
+
+    public Permissions() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

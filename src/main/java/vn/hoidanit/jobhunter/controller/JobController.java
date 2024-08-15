@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.hoidanit.jobhunter.domain.Job;
+import vn.hoidanit.jobhunter.domain.Skills;
 import vn.hoidanit.jobhunter.domain.req.ReqCreateJob;
 import vn.hoidanit.jobhunter.domain.req.ReqUpdateJob;
 import vn.hoidanit.jobhunter.domain.res.CreateJobDto;
@@ -17,16 +18,22 @@ import vn.hoidanit.jobhunter.repository.SkillsRepository;
 import vn.hoidanit.jobhunter.service.JobService;
 import vn.hoidanit.jobhunter.utils.annotation.ApiMessage;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
 public class JobController {
     private final JobService jobService;
+    private final SkillsRepository skillsRepository;
 
 
     public JobController(JobService jobService, SkillsRepository skillsRepository) {
+
         this.jobService = jobService;
+        this.skillsRepository = skillsRepository;
+
     }
 
     @ApiMessage("Create New Job Success ")
@@ -64,9 +71,19 @@ public class JobController {
 
     @ApiMessage("Fetch Job Success")
     @GetMapping("/jobs")
-    public ResponseEntity<RestPaginateDTO> GetAllJobsWithPaginate(Pageable pageable) {
+    public ResponseEntity<RestPaginateDTO> GetAllJobsWithPaginate(Pageable pageable, @RequestParam("location") Optional<List<String>> Olocation,
 
-        Page<Job> Job = this.jobService.handleGetJobsWithPaginate(pageable);
+                                                                  @RequestParam("skills") Optional<List<String>> skills) {
+        List<Long> skillId = new ArrayList<>();
+        if (skills.isPresent()) {
+
+            skills.get().forEach(skill -> {
+                skillId.add((long) Integer.parseInt(skill));
+            });
+        }
+        List<Skills> skillsList = this.skillsRepository.findByIdIn(skillId);
+        List<String> location = Olocation.isPresent() ? Olocation.get() : null;
+        Page<Job> Job = this.jobService.handleGetJobsWithPaginate(pageable, skillsList, location);
         List<Job> listJob = Job.getContent();
         Meta meta = new Meta();
         meta.setCurrent(pageable.getPageNumber() + 1);
