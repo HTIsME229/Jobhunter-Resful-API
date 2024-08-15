@@ -85,7 +85,7 @@ public class SecurityConfiguration {
 //                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()) //403
 //                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/", "/api/v1/auth/refresh", "/storage/**", "/api/v1/download/**").permitAll()
+                        .requestMatchers("/api/v1/auth/register", "/api/v1/auth/login", "/api/v1/email", "/", "/api/v1/auth/refresh", "/storage/**", "/api/v1/download/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1/companies").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/jobs").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/skills").permitAll()
