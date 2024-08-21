@@ -7,6 +7,8 @@ import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,8 +18,10 @@ import vn.hoidanit.jobhunter.domain.Job;
 import vn.hoidanit.jobhunter.domain.Skills;
 import vn.hoidanit.jobhunter.domain.Subscriber;
 import vn.hoidanit.jobhunter.domain.User;
+import vn.hoidanit.jobhunter.domain.res.RestEmailJob;
 import vn.hoidanit.jobhunter.repository.SkillsRepository;
 import vn.hoidanit.jobhunter.repository.SubscriberRepository;
+import vn.hoidanit.jobhunter.service.EmailService;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.utils.SecurityUtil;
 
@@ -28,23 +32,21 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1")
 public class EmailController {
-    private MailSender mailSender;
-    private final JavaMailSender javaMailSender;
-    private SpringTemplateEngine templateEngine;
+
     private SubscriberRepository subscriberRepository;
     private SkillsRepository skillsRepository;
+    private EmailService emailService;
 
+    public EmailController(SubscriberRepository subscriberRepository, SkillsRepository skillsRepository, EmailService emailService) {
 
-    public EmailController(MailSender mailSender, JavaMailSender javaMailSender, SpringTemplateEngine templateEngine, SubscriberRepository subscriberRepository, SkillsRepository skillsRepository) {
-        this.mailSender = mailSender;
-        this.javaMailSender = javaMailSender;
-        this.templateEngine = templateEngine;
         this.subscriberRepository = subscriberRepository;
         this.skillsRepository = skillsRepository;
+        this.emailService = emailService;
     }
 
+
     @GetMapping("/email")
-    public String email() {
+    public String email(Model model) {
         List<Subscriber> subscribers = subscriberRepository.findAll();
         List<Skills> skillsList = this.skillsRepository.findAll();
         for (Skills skills : skillsList) {
@@ -55,7 +57,10 @@ public class EmailController {
                 }
             }
             if (emails.size() > 0) {
-                sendEmailFromTemplateSync(emails, skills.getName(), "test");
+                List<Job> jobListBefore = skills.getJobs();
+                String Title = skills.getName();
+                List<RestEmailJob> jobList = this.emailService.hadleConvertListJob(jobListBefore);
+                this.emailService.sendEmailFromTemplateSync(emails, jobList, Title, "test");
             }
 
         }
@@ -64,29 +69,5 @@ public class EmailController {
         return "Hello World";
     }
 
-    public void sendEmailSync(List<String> to, String subject, String content, boolean isMultipart,
-                              boolean isHtml) {
-        // Prepare message using a Spring helper
-        MimeMessage mimeMessage = this.javaMailSender.createMimeMessage();
-        try {
-            MimeMessageHelper message = new MimeMessageHelper(mimeMessage,
-                    isMultipart, StandardCharsets.UTF_8.name());
 
-            String[] toArray = new String[to.size()];
-            toArray = to.toArray(toArray);
-            message.setTo(toArray);
-            message.setSubject(subject);
-            message.setText(content, isHtml);
-            this.javaMailSender.send(mimeMessage);
-        } catch (MailException | MessagingException e) {
-            System.out.println("ERROR SEND EMAIL: " + e);
-        }
-    }
-
-    public void sendEmailFromTemplateSync(List<String> to, String subject, String
-            templateName) {
-        Context context = new Context();
-        String content = this.templateEngine.process(templateName, context);
-        this.sendEmailSync(to, subject, content, false, true);
-    }
 }

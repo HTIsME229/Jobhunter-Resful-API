@@ -1,4 +1,3 @@
-Mới! Phím tắt … Các phím tắt trong Drive đã được cập nhật để bạn có thể thao tác bằng chữ cái đầu tiên
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
@@ -10,13 +9,14 @@ Mới! Phím tắt … Các phím tắt trong Drive đã được cập nhật �
 
 <body
         style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';">
-<table style="max-width: 80rem; min-height: 100vh; padding: 2rem; margin: 0 auto; background-color: #f5f5f5;">
+<table style="max-width: 80rem; min-height: 100vh; padding: 2rem; margin: 0 auto; background-color: #fff;">
+
     <tr>
         <td align="center">
             <table style="background-color: white; border-radius: 5px; padding: 20px;">
                 <tr>
                     <td>
-                        <div style="text-align: left; font-size: 20px;">Hỏi Dân IT</div>
+                        <div style="text-align: left; font-size: 20px;">Job Hunter</div>
                     </td>
                     <td>
                         <div style="text-align: right; font-size: 20px;">Ít nhưng mà chất</div>
@@ -28,7 +28,6 @@ Mới! Phím tắt … Các phím tắt trong Drive đã được cập nhật �
                 <tr>
                     <td colspan="2">
                         <div style="text-align: left;">
-                            <div style="font-size: 16px;">Hi Hary Pham,</div>
                             <div style="font-size: 16px;">One of these jobs may be your next one. Find out today!
                             </div>
                         </div>
@@ -40,46 +39,36 @@ Mới! Phím tắt … Các phím tắt trong Drive đã được cập nhật �
                 <tr>
                     <td colspan="2">
                         <table>
-                            <tr>
-                                <td>
-                                    <div style="font-size: 16px;">
-                                        <a href="https://hoidanit.vn/" target="_blank"
-                                           style="text-decoration: none;">Web Developer
-                                            (PHP, JavaScript)</a>
-                                    </div>
-                                    <div style="font-size: 14px;">VINAKET CO.LTD</div>
-                                    <div style="font-size: 14px;">1,000 - 2,500 USD</div>
-                                    <div style="margin-top: 5px;">
+
+                            <th:block th:each="job : ${jobList}">
+
+                                <tr>
+                                    <td style="font-size: 20px;" th:text="${job.name}"/>
+
+
+                                </tr>
+                                <tr>
+                                    <!--                                    <td style="font-size: 14px;">Location:<span th:text="${job.location}"></span></td>-->
+
+                                    <td style="font-size: 14px;">Salary:<span
+                                            th:text="${#numbers.formatCurrency(job.salary)}"></span></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size: 16px; "><b>Company:</b> <span
+                                            th:text="${job.company.name}"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th:block th:each="skill : ${job.skills}">
+
                                             <span
-                                                    style="font-size: 14px; background: #e8e8e8; padding: 3px; margin-right: 5px;  border-radius: 3px;">Java</span>
-                                        <span
-                                                style="font-size: 14px; background: #e8e8e8; padding: 3px; margin-right: 5px;  border-radius: 3px;">Spring</span>
-                                        <span
-                                                style="font-size: 14px; background: #e8e8e8; padding: 3px; margin-right: 5px;  border-radius: 3px;">English</span>
-                                    </div>
-                                    <div style="margin: 15px 0; border-top: 1px dashed rgba(5, 5, 5, 0.06);"></div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <div style="font-size: 16px;">
-                                        <a href="https://hoidanit.vn/" target="_blank"
-                                           style="text-decoration: none;">Web Developer
-                                            (PHP, JavaScript)</a>
-                                    </div>
-                                    <div style="font-size: 14px;">VINAKET CO.LTD</div>
-                                    <div style="font-size: 14px;">1,000 - 2,500 USD</div>
-                                    <div style="margin-top: 5px;">
-                                            <span
-                                                    style="font-size: 14px; background: #e8e8e8; padding: 3px; margin-right: 5px;  border-radius: 3px;">PHP</span>
-                                        <span
-                                                style="font-size: 14px; background: #e8e8e8; padding: 3px; margin-right: 5px;  border-radius: 3px;">JavaScript</span>
-                                        <span
-                                                style="font-size: 14px; background: #e8e8e8; padding: 3px; margin-right: 5px;  border-radius: 3px;">English</span>
-                                    </div>
-                                    <div style="margin: 15px 0; border-top: 1px dashed rgba(5, 5, 5, 0.06);"></div>
-                                </td>
-                            </tr>
+                                                    th:text="${skill.name}"
+                                                    style="font-size: 14px; background: #e8e8e8; padding: 3px; margin-right: 5px;  border-radius: 3px;">
+                                                   </span>
+
+                                    </th:block>
+                                </tr>
+                            </th:block>
                         </table>
                     </td>
                 </tr>
@@ -93,8 +82,8 @@ Mới! Phím tắt … Các phím tắt trong Drive đã được cập nhật �
                 </tr>
                 <tr>
                     <td colspan="2">
-                        <div style="padding-top: 20px; text-align: left; font-size: 16px;">Cheers,</div>
-                        <div style="text-align: left; font-size: 16px;">Eric.</div>
+                        <div style="padding-top: 20px; text-align: left; font-size: 16px;">From:JobHunter</div>
+                        <div style="text-align: left; font-size: 16px;">Good Luck</div>
                     </td>
                 </tr>
             </table>
