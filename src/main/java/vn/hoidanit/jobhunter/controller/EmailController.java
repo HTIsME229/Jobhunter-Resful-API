@@ -8,6 +8,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,7 +48,9 @@ public class EmailController {
 
 
     @GetMapping("/email")
-    public String email(Model model) {
+//    @Scheduled(cron = "*/10 * * * * *")
+    @Transactional
+    public String email() {
         List<Subscriber> subscribers = subscriberRepository.findAll();
         List<Skills> skillsList = this.skillsRepository.findAll();
         for (Skills skills : skillsList) {
